@@ -1,0 +1,38 @@
+{
+  "name": "flights-app-nodejs",
+  "version": "1.0.0",
+  "description": "Real-Time Flight Analytics Application with MariaDB, Node.js API, and React Frontend",
+  "main": "src/api/index.js",
+  "scripts": {
+    "start": "./start-app.sh",
+    "stop": "./stop-app.sh",
+    "test": "node test_application.js",
+    "demo": "./demo_application.sh",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "docker:build": "docker-compose build"
+  },
+  "dependencies": {
+    "axios": "^1.9.0"
+  },
+  "devDependencies": {},
+  "keywords": [
+    "flights",
+    "analytics",
+    "nodejs",
+    "react",
+    "mariadb",
+    "docker",
+    "api"
+  ],
+  "author": "sringopi",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sringopi/flights-app-nodejs.git"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
