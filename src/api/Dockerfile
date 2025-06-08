@@ -1,5 +1,4 @@
-  
-FROM node:12
+FROM node:18-alpine
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -12,7 +11,10 @@ RUN npm install
 # Copy app source code
 COPY . .
 
+# Create logs directory
+RUN mkdir -p logs
+
 #Expose port and start application
-EXPOSE 80
+EXPOSE 8080
 
 CMD [ "npm", "start" ]

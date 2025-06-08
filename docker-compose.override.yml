@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  # MariaDB ColumnStore Database
+  mariadb-columnstore:
+    image: mariadb/columnstore:latest
+    container_name: flights-mariadb-cs
+    environment:
+      MARIADB_ROOT_PASSWORD: rootpassword
+      MARIADB_DATABASE: flights
+      MARIADB_USER: flights_user
+      MARIADB_PASSWORD: flights_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - flights-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      timeout: 20s
+      retries: 10
+
+  # API Backend Service
+  api:
+    build:
+      context: ./src/api
+      dockerfile: Dockerfile
+    container_name: flights-api
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=mariadb-columnstore
+      - DB_PORT=3306
+      - DB_USER=flights_user
+      - DB_PASS=flights_password
+      - DB_NAME=flights
+    ports:
+      - "8080:8080"
+    depends_on:
+      mariadb-columnstore:
+        condition: service_healthy
+    networks:
+      - flights-network
+    volumes:
+      - ./src/api:/app
+      - /app/node_modules
+
+  # Frontend Client Service
+  client:
+    build:
+      context: ./src/client
+      dockerfile: Dockerfile
+    container_name: flights-client
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8080
+    depends_on:
+      - api
+    networks:
+      - flights-network
+    volumes:
+      - ./src/client:/app
+      - /app/node_modules
+
+networks:
+  flights-network:
+    driver: bridge
+
+volumes:
+  mariadb_data:
