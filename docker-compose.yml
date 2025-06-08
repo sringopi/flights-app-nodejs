@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  mariadb-columnstore:
+    image: mariadb/columnstore:latest
+    container_name: flights-mariadb-cs
+    environment:
+      MARIADB_ROOT_PASSWORD: rootpassword
+      MARIADB_DATABASE: flights
+      MARIADB_USER: flights_user
+      MARIADB_PASSWORD: flights_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - flights-network
+
+networks:
+  flights-network:
+    driver: bridge
+
+volumes:
+  mariadb_data:
